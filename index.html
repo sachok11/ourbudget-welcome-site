@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OurBudget — Shared Family Finance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .card {
+      background: #020617;
+      padding: 2.5rem;
+      border-radius: 16px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      opacity: 0.85;
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #22c55e;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>OurBudget</h1>
+    <p>
+      A shared family budget where everyone stays in sync.  
+      Join the waitlist and be the first to try it for free forever!
+    </p>
+
+    <form id="emailForm">
+      <input
+        type="email"
+        id="email"
+        placeholder="your@email.com"
+        required
+      />
+      <button type="submit">Join the waitlist</button>
+    </form>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const SUPABASE_URL = "https://tlsrbxxgpworughzoeov.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_zTSDUvZbZVkzoshG0J7eOw_xIvkqac7";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById("emailForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+
+      const { error } = await supabase
+        .from("waitlist_emails")
+        .insert([{ email }]);
+
+      if (error) {
+        message.textContent = "This email is already registered.";
+        message.style.color = "#f87171";
+      } else {
+        message.textContent = "💕 Thanks! You’re on the list.";
+        message.style.color = "#4ade80";
+        form.reset();
+      }
+    });
+  </script>
+</body>
+</html>
